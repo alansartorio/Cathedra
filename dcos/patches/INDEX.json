@@ -7,7 +7,8 @@
         "0003-vendor-fix-themedicons-path.patch",
         "0004-build-Flatten-APEXs-for-performance.patch",
         "0005-build-Set-ro.apex.updatable-false-in-product-propert.patch",
-        "0006-vendor-Disable-iorapd.patch"
+        "0006-vendor-Disable-iorapd.patch",
+        "0027-Disable-KeyboardShortcuts.patch"
     ],
     "build/tools": [
         "0007-releasetools-rebrand-to-davincicodeos.patch",

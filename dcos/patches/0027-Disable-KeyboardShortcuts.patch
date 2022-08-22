@@ -1,0 +1,347 @@
+
+project frameworks/base/
+diff --git a/frameworks/base/services/core/java/com/android/server/policy/PhoneWindowManager.java b/frameworks/base/services/core/java/com/android/server/policy/PhoneWindowManager.java
+index aa2ddb8c0757..725dfd893360 100644
+--- a/frameworks/base/services/core/java/com/android/server/policy/PhoneWindowManager.java
++++ b/frameworks/base/services/core/java/com/android/server/policy/PhoneWindowManager.java
+@@ -3133,9 +3133,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
+                     + repeatCount + " keyguardOn=" + keyguardOn + " canceled=" + canceled);
+         }
+ 
+-        if (mKeyCombinationManager.isKeyConsumed(event)) {
+-            return key_consumed;
+-        }
++        //if (mKeyCombinationManager.isKeyConsumed(event)) {
++        //    return key_consumed;
++        //}
+ 
+         // Hardware keys disable
+         if (!fromNavbar && !virtualKey && shouldDisableKey(keyCode)) {
+@@ -3164,14 +3164,15 @@ public class PhoneWindowManager implements WindowManagerPolicy {
+             mHandler.removeCallbacks(mBackLongPress);
+         }
+ 
+-        if (isUserSetupComplete() && !keyguardOn) {
+-            if (mModifierShortcutManager.interceptKey(event)) {
+-                dismissKeyboardShortcutsMenu();
+-                mPendingMetaAction = false;
+-                mPendingCapsLockToggle = false;
+-                return key_consumed;
+-            }
+-        }
++	//// Intent Shortcuts.
++        //if (isUserSetupComplete() && !keyguardOn) {
++        //    if (mModifierShortcutManager.interceptKey(event)) {
++        //        dismissKeyboardShortcutsMenu();
++        //        mPendingMetaAction = false;
++        //        mPendingCapsLockToggle = false;
++        //        return key_consumed;
++        //    }
++        //}
+ 
+         switch(keyCode) {
+             case KeyEvent.KEYCODE_HOME:
+@@ -3270,49 +3271,49 @@ public class PhoneWindowManager implements WindowManagerPolicy {
+                     }
+                 }
+                 return key_consumed;
+-            case KeyEvent.KEYCODE_N:
+-                if (down && event.isMetaPressed()) {
+-                    IStatusBarService service = getStatusBarService();
+-                    if (service != null) {
+-                        try {
+-                            service.expandNotificationsPanel();
+-                        } catch (RemoteException e) {
+-                            // do nothing.
+-                        }
+-                        return key_consumed;
+-                    }
+-                }
+-                break;
+-            case KeyEvent.KEYCODE_S:
+-                if (down && event.isMetaPressed() && event.isCtrlPressed() && repeatCount == 0) {
+-                    int type = event.isShiftPressed() ? TAKE_SCREENSHOT_SELECTED_REGION
+-                            : TAKE_SCREENSHOT_FULLSCREEN;
+-                    mScreenshotRunnable.setScreenshotType(type);
+-                    mScreenshotRunnable.setScreenshotSource(SCREENSHOT_KEY_OTHER);
+-                    mHandler.post(mScreenshotRunnable);
+-                    return key_consumed;
+-                }
+-                break;
+-            case KeyEvent.KEYCODE_SLASH:
+-                if (down && repeatCount == 0 && event.isMetaPressed() && !keyguardOn) {
+-                    toggleKeyboardShortcutsMenu(event.getDeviceId());
+-                    return key_consumed;
+-                }
+-                break;
+-            case KeyEvent.KEYCODE_ASSIST:
+-                Slog.wtf(TAG, "KEYCODE_ASSIST should be handled in interceptKeyBeforeQueueing");
+-                return key_consumed;
+-            case KeyEvent.KEYCODE_VOICE_ASSIST:
+-                Slog.wtf(TAG, "KEYCODE_VOICE_ASSIST should be handled in"
+-                        + " interceptKeyBeforeQueueing");
+-                return key_consumed;
+-            case KeyEvent.KEYCODE_SYSRQ:
+-                if (down && repeatCount == 0) {
+-                    mScreenshotRunnable.setScreenshotType(TAKE_SCREENSHOT_FULLSCREEN);
+-                    mScreenshotRunnable.setScreenshotSource(SCREENSHOT_KEY_OTHER);
+-                    mHandler.post(mScreenshotRunnable);
+-                }
+-                return key_consumed;
++            //case KeyEvent.KEYCODE_N:
++            //    if (down && event.isMetaPressed()) {
++            //        IStatusBarService service = getStatusBarService();
++            //        if (service != null) {
++            //            try {
++            //                service.expandNotificationsPanel();
++            //            } catch (RemoteException e) {
++            //                // do nothing.
++            //            }
++            //            return key_consumed;
++            //        }
++            //    }
++            //    break;
++            //case KeyEvent.KEYCODE_S:
++            //    if (down && event.isMetaPressed() && event.isCtrlPressed() && repeatCount == 0) {
++            //        int type = event.isShiftPressed() ? TAKE_SCREENSHOT_SELECTED_REGION
++            //                : TAKE_SCREENSHOT_FULLSCREEN;
++            //        mScreenshotRunnable.setScreenshotType(type);
++            //        mScreenshotRunnable.setScreenshotSource(SCREENSHOT_KEY_OTHER);
++            //        mHandler.post(mScreenshotRunnable);
++            //        return key_consumed;
++            //    }
++            //    break;
++            //case KeyEvent.KEYCODE_SLASH:
++            //    if (down && repeatCount == 0 && event.isMetaPressed() && !keyguardOn) {
++            //        toggleKeyboardShortcutsMenu(event.getDeviceId());
++            //        return key_consumed;
++            //    }
++            //    break;
++            //case KeyEvent.KEYCODE_ASSIST:
++            //    Slog.wtf(TAG, "KEYCODE_ASSIST should be handled in interceptKeyBeforeQueueing");
++            //    return key_consumed;
++            //case KeyEvent.KEYCODE_VOICE_ASSIST:
++            //    Slog.wtf(TAG, "KEYCODE_VOICE_ASSIST should be handled in"
++            //            + " interceptKeyBeforeQueueing");
++            //    return key_consumed;
++            //case KeyEvent.KEYCODE_SYSRQ:
++            //    if (down && repeatCount == 0) {
++            //        mScreenshotRunnable.setScreenshotType(TAKE_SCREENSHOT_FULLSCREEN);
++            //        mScreenshotRunnable.setScreenshotSource(SCREENSHOT_KEY_OTHER);
++            //        mHandler.post(mScreenshotRunnable);
++            //    }
++            //    return key_consumed;
+             case KeyEvent.KEYCODE_BRIGHTNESS_UP:
+             case KeyEvent.KEYCODE_BRIGHTNESS_DOWN:
+                 if (down) {
+@@ -3367,25 +3368,25 @@ public class PhoneWindowManager implements WindowManagerPolicy {
+                     }
+                 }
+                 break;
+-            case KeyEvent.KEYCODE_TAB:
+-                if (event.isMetaPressed()) {
+-                    // Pass through keyboard navigation keys.
+-                    return 0;
+-                }
+-                // Display task switcher for ALT-TAB.
+-                if (down && repeatCount == 0) {
+-                    if (mRecentAppsHeldModifiers == 0 && !keyguardOn && isUserSetupComplete()) {
+-                        final int shiftlessModifiers =
+-                                event.getModifiers() & ~KeyEvent.META_SHIFT_MASK;
+-                        if (KeyEvent.metaStateHasModifiers(
+-                                shiftlessModifiers, KeyEvent.META_ALT_ON)) {
+-                            mRecentAppsHeldModifiers = shiftlessModifiers;
+-                            showRecentApps(true);
+-                            return key_consumed;
+-                        }
+-                    }
+-                }
+-                break;
++            //case KeyEvent.KEYCODE_TAB:
++            //    if (event.isMetaPressed()) {
++            //        // Pass through keyboard navigation keys.
++            //        return 0;
++            //    }
++            //    // Display task switcher for ALT-TAB.
++            //    if (down && repeatCount == 0) {
++            //        if (mRecentAppsHeldModifiers == 0 && !keyguardOn && isUserSetupComplete()) {
++            //            final int shiftlessModifiers =
++            //                    event.getModifiers() & ~KeyEvent.META_SHIFT_MASK;
++            //            if (KeyEvent.metaStateHasModifiers(
++            //                    shiftlessModifiers, KeyEvent.META_ALT_ON)) {
++            //                mRecentAppsHeldModifiers = shiftlessModifiers;
++            //                showRecentApps(true);
++            //                return key_consumed;
++            //            }
++            //        }
++            //    }
++            //    break;
+             case KeyEvent.KEYCODE_ALL_APPS:
+                 if (!down) {
+                     mHandler.removeMessages(MSG_HANDLE_ALL_APPS);
+@@ -3400,12 +3401,12 @@ public class PhoneWindowManager implements WindowManagerPolicy {
+                 }
+                 return key_consumed;
+ 
+-            case KeyEvent.KEYCODE_SPACE:
+-                // Handle keyboard layout switching.
+-                if ((metaState & (KeyEvent.META_CTRL_MASK | KeyEvent.META_META_MASK)) == 0) {
+-                    return 0;
+-                }
+-                // Share the same behavior with KEYCODE_LANGUAGE_SWITCH.
++            //case KeyEvent.KEYCODE_SPACE:
++            //    // Handle keyboard layout switching.
++            //    if ((metaState & (KeyEvent.META_CTRL_MASK | KeyEvent.META_META_MASK)) == 0) {
++            //        return 0;
++            //    }
++            //    // Share the same behavior with KEYCODE_LANGUAGE_SWITCH.
+             case KeyEvent.KEYCODE_LANGUAGE_SWITCH:
+                 if (down && repeatCount == 0) {
+                     int direction = (metaState & KeyEvent.META_SHIFT_MASK) != 0 ? -1 : 1;
+@@ -3413,55 +3414,55 @@ public class PhoneWindowManager implements WindowManagerPolicy {
+                     return key_consumed;
+                 }
+                 break;
+-            case KeyEvent.KEYCODE_META_LEFT:
+-            case KeyEvent.KEYCODE_META_RIGHT:
+-                if (down) {
+-                    if (event.isAltPressed()) {
+-                        mPendingCapsLockToggle = true;
+-                        mPendingMetaAction = false;
+-                    } else {
+-                        mPendingCapsLockToggle = false;
+-                        mPendingMetaAction = true;
+-                    }
+-                } else {
+-                    // Toggle Caps Lock on META-ALT.
+-                    if (mPendingCapsLockToggle) {
+-                        mInputManagerInternal.toggleCapsLock(event.getDeviceId());
+-                        mPendingCapsLockToggle = false;
+-                    } else if (mPendingMetaAction) {
+-                        launchAssistAction(Intent.EXTRA_ASSIST_INPUT_HINT_KEYBOARD,
+-                                event.getDeviceId(),
+-                                event.getEventTime(), AssistUtils.INVOCATION_TYPE_UNKNOWN);
+-                        mPendingMetaAction = false;
+-                    }
+-                }
+-                return key_consumed;
+-            case KeyEvent.KEYCODE_ALT_LEFT:
+-            case KeyEvent.KEYCODE_ALT_RIGHT:
+-                if (down) {
+-                    if (event.isMetaPressed()) {
+-                        mPendingCapsLockToggle = true;
+-                        mPendingMetaAction = false;
+-                    } else {
+-                        mPendingCapsLockToggle = false;
+-                    }
+-                } else {
+-                    // hide recent if triggered by ALT-TAB.
+-                    if (mRecentAppsHeldModifiers != 0
+-                            && (metaState & mRecentAppsHeldModifiers) == 0) {
+-                        mRecentAppsHeldModifiers = 0;
+-                        hideRecentApps(true, false);
+-                        return key_consumed;
+-                    }
+-
+-                    // Toggle Caps Lock on META-ALT.
+-                    if (mPendingCapsLockToggle) {
+-                        mInputManagerInternal.toggleCapsLock(event.getDeviceId());
+-                        mPendingCapsLockToggle = false;
+-                        return key_consumed;
+-                    }
+-                }
+-                break;
++            //case KeyEvent.KEYCODE_META_LEFT:
++            //case KeyEvent.KEYCODE_META_RIGHT:
++            //    if (down) {
++            //        if (event.isAltPressed()) {
++            //            mPendingCapsLockToggle = true;
++            //            mPendingMetaAction = false;
++            //        } else {
++            //            mPendingCapsLockToggle = false;
++            //            mPendingMetaAction = true;
++            //        }
++            //    } else {
++            //        // Toggle Caps Lock on META-ALT.
++            //        if (mPendingCapsLockToggle) {
++            //            mInputManagerInternal.toggleCapsLock(event.getDeviceId());
++            //            mPendingCapsLockToggle = false;
++            //        } else if (mPendingMetaAction) {
++            //            launchAssistAction(Intent.EXTRA_ASSIST_INPUT_HINT_KEYBOARD,
++            //                    event.getDeviceId(),
++            //                    event.getEventTime(), AssistUtils.INVOCATION_TYPE_UNKNOWN);
++            //            mPendingMetaAction = false;
++            //        }
++            //    }
++            //    return key_consumed;
++            //case KeyEvent.KEYCODE_ALT_LEFT:
++            //case KeyEvent.KEYCODE_ALT_RIGHT:
++            //    if (down) {
++            //        if (event.isMetaPressed()) {
++            //            mPendingCapsLockToggle = true;
++            //            mPendingMetaAction = false;
++            //        } else {
++            //            mPendingCapsLockToggle = false;
++            //        }
++            //    } else {
++            //        // hide recent if triggered by ALT-TAB.
++            //        if (mRecentAppsHeldModifiers != 0
++            //                && (metaState & mRecentAppsHeldModifiers) == 0) {
++            //            mRecentAppsHeldModifiers = 0;
++            //            hideRecentApps(true, false);
++            //            return key_consumed;
++            //        }
++
++            //        // Toggle Caps Lock on META-ALT.
++            //        if (mPendingCapsLockToggle) {
++            //            mInputManagerInternal.toggleCapsLock(event.getDeviceId());
++            //            mPendingCapsLockToggle = false;
++            //            return key_consumed;
++            //        }
++            //    }
++            //    break;
+         }
+ 
+         if (keyCode == KeyEvent.KEYCODE_BACK) {
+@@ -3483,9 +3484,9 @@ public class PhoneWindowManager implements WindowManagerPolicy {
+         }
+ 
+         // Reserve all the META modifier combos for system behavior
+-        if ((metaState & KeyEvent.META_META_ON) != 0) {
+-            return key_consumed;
+-        }
++        //if ((metaState & KeyEvent.META_META_ON) != 0) {
++            //return key_consumed;
++        //}
+ 
+         // Let the application handle the key.
+         return 0;
+@@ -4623,17 +4624,17 @@ public class PhoneWindowManager implements WindowManagerPolicy {
+         }
+ 
+         // Intercept the Accessibility keychord (CTRL + ALT + Z) for keyboard users.
+-        if (mAccessibilityShortcutController.isAccessibilityShortcutAvailable(isKeyguardLocked())) {
+-            switch (keyCode) {
+-                case KeyEvent.KEYCODE_Z: {
+-                    if (down && event.isCtrlPressed() && event.isAltPressed()) {
+-                        mHandler.sendMessage(mHandler.obtainMessage(MSG_ACCESSIBILITY_SHORTCUT));
+-                        result &= ~ACTION_PASS_TO_USER;
+-                    }
+-                    break;
+-                }
+-            }
+-        }
++        //if (mAccessibilityShortcutController.isAccessibilityShortcutAvailable(isKeyguardLocked())) {
++        //    switch (keyCode) {
++        //        case KeyEvent.KEYCODE_Z: {
++        //            if (down && event.isCtrlPressed() && event.isAltPressed()) {
++        //                mHandler.sendMessage(mHandler.obtainMessage(MSG_ACCESSIBILITY_SHORTCUT));
++        //                result &= ~ACTION_PASS_TO_USER;
++        //            }
++        //            break;
++        //        }
++        //    }
++        //}
+ 
+         if (useHapticFeedback) {
+             performHapticFeedback(HapticFeedbackConstants.VIRTUAL_KEY, false,
